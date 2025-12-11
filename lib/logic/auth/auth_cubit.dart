@@ -26,9 +26,9 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void signUp(String email, String password, String role) async {
+  void signUp(String email, String password, String role, String username) async {
     try {
-      await _authService.signUp(email, password, role);
+      await _authService.signUp(email, password, role, username);
     } catch (e) {
       emit(AuthError(e.toString()));
     }

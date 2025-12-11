@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quiz_app/logic/home/home_cubit.dart';
 import 'package:quiz_app/logic/home/home_state.dart';
+import 'package:quiz_app/logic/auth/auth_cubit.dart';
+import 'package:quiz_app/logic/auth/auth_state.dart';
 import 'package:quiz_app/model/category.dart';
 import 'package:quiz_app/core/routes/routes.dart';
 
@@ -82,13 +84,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'welcome_learner'.tr(),
-                      style: TextStyle(
-                        fontSize: 28.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    BlocBuilder<AuthCubit, AuthState>(
+                      builder: (context, authState) {
+                        String username = 'User';
+                        if (authState is Authenticated) {
+                          username = authState.user.username;
+                        }
+                        return Text(
+                          'welcome_learner'.tr(args: [username]),
+                          style: TextStyle(
+                            fontSize: 28.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        );
+                      },
                     ),
                     SizedBox(height: 8.h),
                     Text(

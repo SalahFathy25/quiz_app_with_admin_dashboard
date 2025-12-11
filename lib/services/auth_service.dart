@@ -9,8 +9,12 @@ class AuthService {
   Stream<AppUser?> get authStateChanges {
     return _auth.authStateChanges().asyncMap((user) async {
       if (user == null) return null;
-      final role = await _getUserRole(user.uid);
-      return AppUser.fromFirebase(user, role);
+      final userData = await _getUserData(user.uid);
+      return AppUser.fromFirebase(
+        user,
+        userData['role'] ?? 'user',
+        userData['username'],
+      );
     });
   }
 
@@ -21,22 +25,34 @@ class AuthService {
         password: password,
       );
       final user = credential.user!;
-      final role = await _getUserRole(user.uid);
-      return AppUser.fromFirebase(user, role);
+      final userData = await _getUserData(user.uid);
+      return AppUser.fromFirebase(
+        user,
+        userData['role'] ?? 'user',
+        userData['username'],
+      );
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<AppUser> signUp(String email, String password, String role) async {
+  Future<AppUser> signUp(
+    String email,
+    String password,
+    String role,
+    String username,
+  ) async {
     try {
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
       final user = credential.user!;
-      await _firestore.collection('users').doc(user.uid).set({'role': role});
-      return AppUser.fromFirebase(user, role);
+      await _firestore.collection('users').doc(user.uid).set({
+        'role': role,
+        'username': username,
+      });
+      return AppUser.fromFirebase(user, role, username);
     } catch (e) {
       rethrow;
     }
@@ -46,12 +62,12 @@ class AuthService {
     await _auth.signOut();
   }
 
-  Future<String> _getUserRole(String uid) async {
+  Future<Map<String, dynamic>> _getUserData(String uid) async {
     try {
       final doc = await _firestore.collection('users').doc(uid).get();
-      return doc.data()?['role'] ?? 'user';
+      return doc.data() ?? {'role': 'user', 'username': 'User'};
     } catch (e) {
-      return 'user';
+      return {'role': 'user', 'username': 'User'};
     }
   }
 }

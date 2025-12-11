@@ -15,12 +15,14 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   String _selectedRole = 'user';
 
   @override
   void dispose() {
     _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -84,6 +86,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       children: [
                         SizedBox(height: 20.h),
                         TextFormField(
+                          controller: _usernameController,
+                          decoration: InputDecoration(labelText: 'username'.tr()),
+                          validator: (value) => value!.isEmpty
+                              ? 'please_enter_username'.tr()
+                              : null,
+                        ),
+                        SizedBox(height: 16.h),
+                        TextFormField(
                           controller: _emailController,
                           decoration: InputDecoration(labelText: 'email'.tr()),
                           validator: (value) =>
@@ -130,6 +140,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       _emailController.text,
                                       _passwordController.text,
                                       _selectedRole,
+                                      _usernameController.text,
                                     );
                                   }
                                 },

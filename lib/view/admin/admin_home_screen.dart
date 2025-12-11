@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quiz_app/logic/auth/auth_cubit.dart';
+import 'package:quiz_app/logic/auth/auth_state.dart';
 import 'package:quiz_app/logic/admin/admin_stats_cubit.dart';
 import 'package:quiz_app/logic/admin/admin_stats_state.dart';
 import 'package:quiz_app/core/routes/routes.dart';
@@ -69,10 +70,18 @@ class AdminHomeScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'welcome_admin'.tr(),
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                      BlocBuilder<AuthCubit, AuthState>(
+                        builder: (context, authState) {
+                          String username = 'Admin';
+                          if (authState is Authenticated) {
+                            username = authState.user.username;
+                          }
+                          return Text(
+                            'welcome_admin'.tr(args: [username]),
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          );
+                        },
                       ),
                       const SizedBox(height: 8.0),
                       Text(

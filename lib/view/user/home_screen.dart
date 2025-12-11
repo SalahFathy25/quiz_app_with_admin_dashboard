@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quiz_app/logic/home/home_cubit.dart';
 import 'package:quiz_app/logic/home/home_state.dart';
 import 'package:quiz_app/model/category.dart';
@@ -50,22 +52,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   SliverAppBar _buildSliverAppBar(HomeState state) {
     return SliverAppBar(
-      expandedHeight: 230,
+      expandedHeight: 230.h,
       pinned: true,
       floating: true,
       centerTitle: false,
       backgroundColor: Theme.of(context).primaryColor,
       elevation: 0,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20),
-          bottomRight: Radius.circular(20),
+          bottomLeft: Radius.circular(20.r),
+          bottomRight: Radius.circular(20.r),
         ),
       ),
-      title: const Text(
+      title: Text(
         'Smart Quiz',
         style: TextStyle(
-          fontSize: 24,
+          fontSize: 24.sp,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
@@ -74,30 +76,30 @@ class _HomeScreenState extends State<HomeScreen> {
         background: SafeArea(
           child: Column(
             children: [
-              const SizedBox(height: kToolbarHeight + 16),
+              SizedBox(height: kToolbarHeight + 16.h),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Welcome, Learner!',
+                    Text(
+                      'welcome_learner'.tr(),
                       style: TextStyle(
-                        fontSize: 28,
+                        fontSize: 28.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Text(
-                      "let's test your knowledge today!",
+                      "lets_test_knowledge".tr(),
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.white.withAlpha(80),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     _buildSearchBar(state),
                   ],
                 ),
@@ -114,19 +116,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(8.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(10),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            blurRadius: 4.r,
+            offset: Offset(0, 2.h),
           ),
         ],
       ),
       child: TextField(
         controller: _searchController,
         decoration: InputDecoration(
-          hintText: "search categories...",
+          hintText: "search_categories".tr(),
           prefixIcon: Icon(Icons.search, color: Theme.of(context).primaryColor),
           suffixIcon: _searchController.text.isNotEmpty
               ? IconButton(
@@ -148,15 +150,15 @@ class _HomeScreenState extends State<HomeScreen> {
   SliverToBoxAdapter _buildCategoryFilters(HomeLoaded state) {
     return SliverToBoxAdapter(
       child: Container(
-        margin: const EdgeInsets.all(16),
-        height: 40,
+        margin: EdgeInsets.all(16.r),
+        height: 40.h,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: state.categoryFilters.length,
           itemBuilder: (context, index) {
             final filter = state.categoryFilters[index];
             return Padding(
-              padding: const EdgeInsets.only(right: 8),
+              padding: EdgeInsets.only(right: 8.w),
               child: ChoiceChip(
                 label: Text(
                   filter,
@@ -197,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return SliverToBoxAdapter(
           child: Center(
             child: Text(
-              'No categories found',
+              'no_categories_found'.tr(),
               style: TextStyle(
                 color: Theme.of(context).textTheme.bodySmall?.color,
               ),
@@ -206,18 +208,18 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
       return SliverPadding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         sliver: SliverGrid(
           delegate: SliverChildBuilderDelegate(
             (context, index) =>
                 _buildCategoryCard(state.filteredCategories[index], index),
             childCount: state.filteredCategories.length,
           ),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            mainAxisSpacing: 16,
+            mainAxisSpacing: 16.h,
             childAspectRatio: 0.8,
-            crossAxisSpacing: 16,
+            crossAxisSpacing: 16.w,
           ),
         ),
       );
@@ -229,10 +231,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Card(
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
           ),
           child: InkWell(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -241,31 +243,34 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.r),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16.r),
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor.withAlpha(10),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Icon(
                       Icons.quiz,
-                      size: 48,
+                      size: 48.sp,
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
                   Text(
                     category.name,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
+                      fontSize: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.fontSize?.sp,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Text(
                     category.description,
                     style: Theme.of(context).textTheme.bodyMedium,

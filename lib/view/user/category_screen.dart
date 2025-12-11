@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quiz_app/model/category.dart';
 import 'package:quiz_app/logic/quiz/quiz_by_category_cubit.dart';
 import 'package:quiz_app/logic/quiz/quiz_by_category_state.dart';
@@ -47,20 +49,20 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   children: [
                     Icon(
                       Icons.quiz_outlined,
-                      size: 64,
+                      size: 64.sp,
                       color: Theme.of(context).primaryColor,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     Text(
-                      'No quizzes yet in this category',
+                      'no_quizzes_in_category'.tr(),
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text('Go Back'),
+                      child: Text('go_back'.tr()),
                     ),
                   ],
                 ),
@@ -71,7 +73,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 SliverAppBar(
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
-                  expandedHeight: 230,
+                  expandedHeight: 230.h,
                   floating: false,
                   pinned: true,
                   leading: IconButton(
@@ -86,12 +88,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   flexibleSpace: FlexibleSpaceBar(
                     centerTitle: true,
                     title: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(8.0.r),
                       child: Text(
                         widget.category.description,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 12,
+                        style: TextStyle(
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
@@ -101,21 +103,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.category_rounded,
-                            size: 64,
+                            size: 64.sp,
                             color: Colors.white,
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16.h),
                           Text(
                             widget.category.name,
-                            style: const TextStyle(
-                              fontSize: 24,
+                            style: TextStyle(
+                              fontSize: 24.sp,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
                           ),
-                          const SizedBox(height: 30),
+                          SizedBox(height: 30.h),
                         ],
                       ),
                     ),
@@ -123,7 +125,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -146,13 +148,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   Widget _buildQuizCard(Quiz quiz, int index) {
     return Card(
-          margin: EdgeInsets.only(bottom: 16),
+          margin: EdgeInsets.only(bottom: 16.h),
           elevation: 4,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
           ),
           child: InkWell(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
             onTap: () {
               Navigator.push(
                 context,
@@ -162,30 +164,30 @@ class _CategoryScreenState extends State<CategoryScreen> {
               );
             },
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.r),
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(12),
+                    padding: EdgeInsets.all(12.r),
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor.withAlpha(10),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Icon(
                       Icons.quiz,
-                      size: 32,
+                      size: 32.sp,
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  SizedBox(width: 16),
+                  SizedBox(width: 16.w),
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: .start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           quiz.title,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
@@ -193,16 +195,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(height: 8),
+                            SizedBox(height: 8.h),
                             Row(
                               children: [
-                                Icon(Icons.question_answer_outlined, size: 16),
-                                SizedBox(width: 4),
-                                Text('${quiz.questions.length} Questions'),
-                                SizedBox(width: 16),
-                                Icon(Icons.timer_outlined, size: 16),
-                                SizedBox(width: 4),
-                                Text('${quiz.timeLimit} minutes'),
+                                Icon(
+                                  Icons.question_answer_outlined,
+                                  size: 16.sp,
+                                ),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  '${quiz.questions.length} ${"questions".tr()}',
+                                ),
+                                SizedBox(width: 16.w),
+                                Icon(Icons.timer_outlined, size: 16.sp),
+                                SizedBox(width: 4.w),
+                                Text('${quiz.timeLimit} ${"minutes".tr()}'),
                               ],
                             ),
                           ],
@@ -212,7 +219,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   ),
                   Icon(
                     Icons.arrow_forward_ios_rounded,
-                    size: 30,
+                    size: 30.sp,
                     color: Theme.of(context).primaryColor,
                   ),
                 ],

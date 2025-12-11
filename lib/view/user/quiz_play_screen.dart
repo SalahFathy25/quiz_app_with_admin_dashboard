@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quiz_app/core/theme/theme.dart';
 
 import '../../model/question.dart';
@@ -135,16 +137,16 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.all(12),
-              padding: EdgeInsets.all(16),
+              margin: EdgeInsets.all(12.r),
+              padding: EdgeInsets.all(16.r),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16.r),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
+                    blurRadius: 10.r,
+                    offset: Offset(0, 4.h),
                   ),
                 ],
               ),
@@ -166,14 +168,14 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                         alignment: Alignment.center,
                         children: [
                           SizedBox(
-                            height: 55,
-                            width: 55,
+                            height: 55.w,
+                            width: 55.w,
                             child: CircularProgressIndicator(
                               value:
                                   ((_remainingMinutes * 60 +
                                       _remainingSeconds) /
                                   (_totalMinutes * 60)),
-                              strokeWidth: 5,
+                              strokeWidth: 5.w,
                               backgroundColor: Colors.grey[300],
                               valueColor: AlwaysStoppedAnimation<Color>(
                                 _getTimerColor(),
@@ -183,7 +185,7 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                           Text(
                             '$_remainingMinutes:${_remainingSeconds.toString().padLeft(2, '0')}',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                               color: _getTimerColor(),
                             ),
@@ -192,7 +194,7 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 20.h),
                   TweenAnimationBuilder<double>(
                     tween: Tween(
                       begin: 0,
@@ -204,15 +206,15 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                     builder: (context, value, child) {
                       return LinearProgressIndicator(
                         borderRadius: BorderRadius.horizontal(
-                          left: Radius.circular(10),
-                          right: Radius.circular(10),
+                          left: Radius.circular(10.r),
+                          right: Radius.circular(10.r),
                         ),
                         value: value,
                         backgroundColor: Colors.grey[300],
                         valueColor: AlwaysStoppedAnimation<Color>(
                           Theme.of(context).primaryColor,
                         ),
-                        minHeight: 6,
+                        minHeight: 6.h,
                       );
                     },
                   ),
@@ -243,16 +245,16 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
 
   Widget _buildQuestionCard(Question question, int index) {
     return Container(
-          margin: EdgeInsets.all(16),
-          padding: EdgeInsets.all(16),
+          margin: EdgeInsets.all(16.r),
+          padding: EdgeInsets.all(16.r),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
-                blurRadius: 10,
-                offset: Offset(0, 4),
+                blurRadius: 10.r,
+                offset: Offset(0, 4.h),
               ),
             ],
           ),
@@ -260,22 +262,22 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Question ${index + 1}',
+                '${"question".tr()} ${index + 1}',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   color: Theme.of(context).textTheme.bodyLarge?.backgroundColor,
                 ),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: 8.h),
               Text(
                 question.text,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).textTheme.bodyLarge?.backgroundColor,
                 ),
               ),
-              SizedBox(height: 24),
+              SizedBox(height: 24.h),
               ...question.options.asMap().entries.map((entry) {
                 final optionIndex = entry.key;
                 final option = entry.value;
@@ -309,7 +311,7 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
                           title: Text(
                             option,
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.w500,
                               color: _isSelected
                                   ? _isCorrect
@@ -342,17 +344,17 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
               Spacer(),
               SizedBox(
                 width: double.infinity,
-                height: 55,
+                height: 55.h,
                 child: ElevatedButton(
                   onPressed: () {
                     _selectedAnswers[index] != null ? _nextQuestion() : null;
                   },
                   child: Text(
                     index == widget.quiz.questions.length - 1
-                        ? 'Finish Quiz'
-                        : 'Next Question',
+                        ? 'finish_quiz'.tr()
+                        : 'next_question'.tr(),
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),

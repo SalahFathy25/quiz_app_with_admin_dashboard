@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:quiz_app/core/theme/theme.dart';
 
@@ -31,26 +33,26 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     Color color,
   ) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
             color: color.withAlpha(10),
-            blurRadius: 10,
-            spreadRadius: 2,
+            blurRadius: 10.r,
+            spreadRadius: 2.r,
           ),
         ],
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 32),
-          SizedBox(height: 8),
+          Icon(icon, color: color, size: 32.sp),
+          SizedBox(height: 8.h),
           Text(
             value,
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 24.sp,
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -58,7 +60,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
           Text(
             title,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 14.sp,
               color: AppTheme.darkTextSecondaryColor,
             ),
           ),
@@ -83,10 +85,10 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
         ),
         SizedBox(height: 4),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
           decoration: BoxDecoration(
             color: answerColor.withAlpha(10),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(8.r),
           ),
           child: Text(
             answer,
@@ -106,11 +108,11 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
   }
 
   String _getPerformanceMessage(double score) {
-    if (score >= 0.9) return 'Outstanding!';
-    if (score >= 0.8) return 'Great Job!';
-    if (score >= 0.6) return 'Good Effort!';
-    if (score >= 0.4) return 'Keep Practicing!';
-    return 'Try Again!';
+    if (score >= 0.9) return 'outstanding'.tr();
+    if (score >= 0.8) return 'great_job'.tr();
+    if (score >= 0.6) return 'good_effort'.tr();
+    if (score >= 0.4) return 'keep_practicing'.tr();
+    return 'try_again'.tr();
   }
 
   Color _getScoreColor(double score) {
@@ -173,14 +175,14 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                     alignment: Alignment.center,
                     children: [
                       Container(
-                        padding: EdgeInsets.all(20),
+                        padding: EdgeInsets.all(20.r),
                         decoration: BoxDecoration(
                           color: Colors.white.withAlpha(10),
                           shape: BoxShape.circle,
                         ),
                         child: CircularPercentIndicator(
-                          radius: 100,
-                          lineWidth: 15,
+                          radius: 100.r,
+                          lineWidth: 15.w,
                           animation: true,
                           animationDuration: 1500,
                           percent: score,
@@ -190,7 +192,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                               Text(
                                 '$scorePercentage%',
                                 style: TextStyle(
-                                  fontSize: 40,
+                                  fontSize: 40.sp,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
@@ -198,7 +200,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                               Text(
                                 '${((widget.correctAnswers / widget.totalQuestions) * 100).toInt()}',
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 20.sp,
                                   color: Colors.white.withAlpha(90),
                                 ),
                               ),
@@ -216,16 +218,16 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                   ),
                   SizedBox(height: 20),
                   Container(
-                    margin: EdgeInsets.only(bottom: 30),
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    margin: EdgeInsets.only(bottom: 30.h),
+                    padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(30.r),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withAlpha(10),
-                          blurRadius: 10,
-                          offset: Offset(0, 4),
+                          blurRadius: 10.r,
+                          offset: Offset(0, 4.h),
                         ),
                       ],
                     ),
@@ -257,21 +259,21 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.r),
               child: Row(
                 children: [
                   Expanded(
                     child: _buildStatCard(
-                      'Correct',
+                      'correct'.tr(),
                       widget.correctAnswers.toString(),
                       Icons.check_circle,
                       Colors.green,
                     ),
                   ),
-                  SizedBox(width: 16),
+                  SizedBox(width: 16.w),
                   Expanded(
                     child: _buildStatCard(
-                      'Incorrect',
+                      'incorrect'.tr(),
                       (widget.totalQuestions - widget.correctAnswers)
                           .toString(),
                       Icons.cancel,
@@ -282,7 +284,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Column(
                 children: [
                   Row(
@@ -291,11 +293,11 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                         Icons.analytics,
                         color: Theme.of(context).primaryColor,
                       ),
-                      SizedBox(width: 8),
+                      SizedBox(width: 8.w),
                       Text(
-                        'Detailed Analysis',
+                        'detailed_analysis'.tr(),
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
                           color: AppTheme.darkTextSecondaryColor,
                         ),
@@ -350,7 +352,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                             ),
                           ),
                           title: Text(
-                            'Question ${questionIndex + 1}',
+                            '${"question".tr()} ${questionIndex + 1}',
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: AppTheme.lightTextPrimaryColor,
@@ -380,23 +382,23 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                                   Text(
                                     question.text,
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 18.sp,
                                       color: AppTheme.lightTextPrimaryColor,
                                     ),
                                     maxLines: 4,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 20.h),
                                   _buildAnswerRow(
-                                    'Your Answer: ',
+                                    'your_answer'.tr(),
                                     selectedAnswer != null
                                         ? question.options[selectedAnswer]
-                                        : 'Not Answered',
+                                        : 'not_answered'.tr(),
                                     isCorrect ? Colors.green : Colors.redAccent,
                                   ),
-                                  SizedBox(height: 12),
+                                  SizedBox(height: 12.h),
                                   _buildAnswerRow(
-                                    'Correct Answer: ',
+                                    'correct_answer'.tr(),
                                     question.options[question
                                         .correctOptionIndex],
                                     Colors.green,
@@ -417,24 +419,24 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(24),
+              padding: EdgeInsets.all(24.r),
               child: Row(
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () => Navigator.pop(context),
-                      icon: Icon(Icons.refresh, size: 24, color: Colors.white),
+                      icon: Icon(Icons.refresh, size: 24.sp, color: Colors.white),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).primaryColor,
-                        padding: EdgeInsets.symmetric(vertical: 16),
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16.r),
                         ),
                       ),
                       label: Text(
-                        'Try Again',
+                        'try_again'.tr(),
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

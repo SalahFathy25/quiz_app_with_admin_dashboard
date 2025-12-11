@@ -150,7 +150,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                   Padding(
                     padding: EdgeInsets.all(16),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
                           onPressed: () => Navigator.pop(context),
@@ -336,7 +336,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                             decoration: BoxDecoration(
                               color: isCorrect
                                   ? Colors.green.withAlpha(10)
-                                  : Colors.redAccent,
+                                  : Colors.redAccent.withAlpha(10),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -353,14 +353,14 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                             'Question ${questionIndex + 1}',
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: AppTheme.darkTextPrimaryColor,
+                              color: AppTheme.lightTextPrimaryColor,
                             ),
                           ),
                           subtitle: Text(
                             question.text,
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppTheme.darkTextSecondaryColor,
+                              color: AppTheme.lightTextSecondaryColor,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -381,7 +381,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                                     question.text,
                                     style: TextStyle(
                                       fontSize: 18,
-                                      color: AppTheme.darkTextPrimaryColor,
+                                      color: AppTheme.lightTextPrimaryColor,
                                     ),
                                     maxLines: 4,
                                     overflow: TextOverflow.ellipsis,
@@ -440,7 +440,6 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 50),
                 ],
               ),
             ),

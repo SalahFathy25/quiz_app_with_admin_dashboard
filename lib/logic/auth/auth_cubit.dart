@@ -20,17 +20,21 @@ class AuthCubit extends Cubit<AuthState> {
 
   void signIn(String email, String password) async {
     try {
+      emit(AuthLoading());
       await _authService.signIn(email, password);
     } catch (e) {
       emit(AuthError(e.toString()));
+      emit(Unauthenticated());
     }
   }
 
   void signUp(String email, String password, String role, String username) async {
     try {
+      emit(AuthLoading());
       await _authService.signUp(email, password, role, username);
     } catch (e) {
       emit(AuthError(e.toString()));
+      emit(Unauthenticated());
     }
   }
 

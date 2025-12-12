@@ -4,6 +4,7 @@ import 'package:quiz_app/logic/admin/manage_categories_cubit.dart';
 import 'package:quiz_app/logic/admin/manage_categories_state.dart';
 import 'package:quiz_app/model/category.dart';
 import 'package:quiz_app/core/routes/routes.dart';
+import 'package:quiz_app/view/admin/widgets/category_list_item.dart';
 
 class ManageCategoriesScreen extends StatefulWidget {
   const ManageCategoriesScreen({super.key});
@@ -92,63 +93,12 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
       itemCount: categories.length,
       itemBuilder: (context, index) {
         final category = categories[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(16),
-            leading: _buildCategoryIcon(context),
-            title: Text(
-              category.name,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            subtitle: Text(category.description),
-            trailing: _buildPopupMenu(context, category),
-            onTap: () => _navigateToManageQuizzes(context, category),
-          ),
+        return CategoryListItem(
+          category: category,
+          onTap: () => _navigateToManageQuizzes(context, category),
+          onAction: (action) => _handleCategoryAction(context, action, category),
         );
       },
-    );
-  }
-
-  Widget _buildCategoryIcon(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withAlpha(10),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Icon(
-        Icons.category_outlined,
-        color: Theme.of(context).primaryColor,
-        size: 24,
-      ),
-    );
-  }
-
-  PopupMenuButton<String> _buildPopupMenu(
-    BuildContext context,
-    Category category,
-  ) {
-    return PopupMenuButton(
-      onSelected: (value) => _handleCategoryAction(context, value, category),
-      itemBuilder: (context) => [
-        PopupMenuItem(
-          value: 'edit',
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.edit, color: Theme.of(context).primaryColor),
-            title: Text('Edit'),
-          ),
-        ),
-        const PopupMenuItem(
-          value: 'delete',
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.delete, color: Colors.redAccent),
-            title: Text('Delete'),
-          ),
-        ),
-      ],
     );
   }
 

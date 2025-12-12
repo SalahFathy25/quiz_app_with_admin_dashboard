@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quiz_app/logic/auth/auth_cubit.dart';
 import 'package:quiz_app/logic/auth/auth_state.dart';
 import 'package:quiz_app/core/routes/routes.dart';
-import 'package:quiz_app/logic/settings/settings_cubit.dart';
+import 'package:quiz_app/view/auth/widgets/login_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -103,61 +103,17 @@ class _LoginScreenState extends State<LoginScreen> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.all(24.w),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        SizedBox(height: 20.h),
-                        TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(labelText: 'email'.tr()),
-                          validator: (value) =>
-                              value!.isEmpty ? 'please_enter_email'.tr() : null,
-                        ),
-                        SizedBox(height: 16.h),
-                        TextFormField(
-                          controller: _passwordController,
-                          decoration: InputDecoration(
-                            labelText: 'password'.tr(),
-                          ),
-                          obscureText: true,
-                          validator: (value) => value!.isEmpty
-                              ? 'please_enter_password'.tr()
-                              : null,
-                        ),
-                        SizedBox(height: 16.h),
-                        Row(
-                          children: [
-                            Checkbox(
-                              value: _rememberMe,
-                              onChanged: (value) {
-                                setState(() {
-                                  _rememberMe = value!;
-                                });
-                              },
-                            ),
-                            const Text('Remember Me'),
-                          ],
-                        ),
-                        SizedBox(height: 32.h),
-                        ElevatedButton(
-                          onPressed: state is AuthInitial ? null : _handleLogin,
-                          child: state is AuthInitial
-                              ? const CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation(
-                                    Colors.white,
-                                  ),
-                                )
-                              : Text('login'.tr()),
-                        ),
-                        SizedBox(height: 16.h),
-                        TextButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, AppRoutes.register),
-                          child: Text('dont_have_account'.tr()),
-                        ),
-                      ],
-                    ),
+                  child: LoginForm(
+                    formKey: _formKey,
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                    rememberMe: _rememberMe,
+                    onRememberMeChanged: (value) {
+                      setState(() {
+                        _rememberMe = value!;
+                      });
+                    },
+                    onLogin: _handleLogin,
                   ),
                 ),
               ),

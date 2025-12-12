@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../model/category.dart';
 import '../../services/category_service.dart';
+import 'widgets/category_form_fields.dart';
 
 class AddCategoryScreen extends StatefulWidget {
   final Category? category;
@@ -127,99 +128,39 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader(context),
-                  const SizedBox(height: 24),
-                  _buildNameField(context),
-                  const SizedBox(height: 20),
-                  _buildDescriptionField(context),
+                  CategoryFormFields(
+                    nameController: _nameController,
+                    descriptionController: _descriptionController,
+                  ),
                   const SizedBox(height: 32),
-                  _buildSaveButton(),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50.0,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _saveCategory,
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              widget.category == null ? 'Add Category' : 'Update Category',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Category Details',
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Create a new category for organizing your quizzes.',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNameField(BuildContext context) {
-    return TextFormField(
-      controller: _nameController,
-      decoration: InputDecoration(
-        labelText: 'Category Name',
-        hintText: 'Enter Category name',
-        prefixIcon: Icon(
-          Icons.category_rounded,
-          color: Theme.of(context).primaryColor,
-        ),
-      ),
-      validator: (value) =>
-          value!.isEmpty ? 'Please enter a category name' : null,
-      textInputAction: TextInputAction.next,
-    );
-  }
-
-  Widget _buildDescriptionField(BuildContext context) {
-    return TextFormField(
-      controller: _descriptionController,
-      decoration: InputDecoration(
-        labelText: 'Description',
-        hintText: 'Enter Category description',
-        alignLabelWithHint: true,
-        prefixIcon: Icon(
-          Icons.description_rounded,
-          color: Theme.of(context).primaryColor,
-        ),
-      ),
-      maxLines: 3,
-      validator: (value) =>
-          value!.isEmpty ? 'Please enter a category description' : null,
-      textInputAction: TextInputAction.done,
-    );
-  }
-
-  Widget _buildSaveButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 50.0,
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _saveCategory,
-        child: _isLoading
-            ? const SizedBox(
-                height: 24,
-                width: 24,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  strokeWidth: 2,
-                ),
-              )
-            : Text(
-                widget.category == null ? 'Add Category' : 'Update Category',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
       ),
     );
   }

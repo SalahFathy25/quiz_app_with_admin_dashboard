@@ -3,6 +3,8 @@ import 'package:quiz_app/model/question.dart';
 import 'package:quiz_app/model/quiz.dart';
 import 'package:quiz_app/services/quiz_service.dart';
 import 'package:quiz_app/core/theme/theme.dart';
+import 'widgets/edit_quiz_details_form.dart';
+import 'widgets/question_card.dart';
 
 class EditQuizScreen extends StatefulWidget {
   final Quiz quiz;
@@ -144,212 +146,71 @@ class _EditQuizScreenState extends State<EditQuizScreen> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            _buildQuizDetails(),
+            EditQuizDetailsForm(
+              titleController: _titleController,
+              timeLimitController: _timeLimitController,
+            ),
             const SizedBox(height: 16),
-            _buildQuestionsSection(),
-            const SizedBox(height: 32),
-            _buildSaveButton(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuizDetails() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Quiz Details',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 20),
-        _buildTitleField(),
-        const SizedBox(height: 16),
-        _buildTimeLimitField(),
-      ],
-    );
-  }
-
-  TextFormField _buildTitleField() {
-    return TextFormField(
-      controller: _titleController,
-      decoration: const InputDecoration(
-        labelText: 'Quiz Title',
-        hintText: 'Enter Quiz title',
-        prefixIcon: Icon(Icons.title, color: AppTheme.primaryColor),
-      ),
-      validator: (value) => value!.isEmpty ? 'Please enter a quiz title' : null,
-      textInputAction: TextInputAction.next,
-    );
-  }
-
-  TextFormField _buildTimeLimitField() {
-    return TextFormField(
-      controller: _timeLimitController,
-      decoration: const InputDecoration(
-        labelText: 'Time Limit (in minutes)',
-        hintText: 'Enter time limit',
-        prefixIcon: Icon(Icons.timer, color: AppTheme.primaryColor),
-      ),
-      keyboardType: TextInputType.number,
-      validator: (value) {
-        if (value!.isEmpty) return 'Please enter a time limit';
-        final timeLimit = int.tryParse(value);
-        if (timeLimit == null || timeLimit <= 0) {
-          return 'Please enter a valid time limit';
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildQuestionsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Questions',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            ElevatedButton.icon(
-              onPressed: _addQuestion,
-              icon: const Icon(Icons.add),
-              label: const Text('Add Question'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        ..._questionsItems.asMap().entries.map((entry) {
-          return _buildQuestionCard(entry.key, entry.value);
-        }),
-      ],
-    );
-  }
-
-  Card _buildQuestionCard(int index, QuestionFormItem item) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Question ${index + 1}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryColor,
+                const Text(
+                  'Questions',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                ElevatedButton.icon(
+                  onPressed: _addQuestion,
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add Question'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: Colors.white,
                   ),
                 ),
-                if (_questionsItems.length > 1)
-                  IconButton(
-                    onPressed: () => _removeQuestion(index),
-                    icon: const Icon(Icons.delete, color: Colors.redAccent),
-                  ),
               ],
             ),
             const SizedBox(height: 16),
-            TextFormField(
-              controller: item.questionController,
-              decoration: const InputDecoration(labelText: 'Question Title'),
-              validator: (v) => v!.isEmpty ? 'Please enter a question' : null,
-            ),
-            const SizedBox(height: 16),
-            ...item.optionsControllers.asMap().entries.map((entry) {
-              return _buildOptionField(item, entry.key, entry.value);
+            ..._questionsItems.asMap().entries.map((entry) {
+              final index = entry.key;
+              return QuestionCard(
+                index: index,
+                item: entry.value,
+                canRemove: _questionsItems.length > 1,
+                onRemove: () => _removeQuestion(index),
+                onCorrectOptionChanged: (value) {
+                  setState(() => entry.value.correctOptionIndex = value);
+                },
+              );
             }),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              height: 50.0,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _updateQuiz,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 24.0,
+                        width: 24.0,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        'Update Quiz',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+              ),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  Padding _buildOptionField(
-    QuestionFormItem item,
-    int optionIndex,
-    TextEditingController controller,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
-        children: [
-          Radio<int>(
-            activeColor: AppTheme.primaryColor,
-            value: optionIndex,
-            groupValue: item.correctOptionIndex,
-            onChanged: (value) =>
-                setState(() => item.correctOptionIndex = value!),
-          ),
-          Expanded(
-            child: TextFormField(
-              controller: controller,
-              decoration: InputDecoration(
-                labelText: 'Option ${optionIndex + 1}',
-              ),
-              validator: (v) => v!.isEmpty ? 'Please enter an option' : null,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSaveButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 50.0,
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _updateQuiz,
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: _isLoading
-            ? const SizedBox(
-                height: 24.0,
-                width: 24.0,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  strokeWidth: 2,
-                ),
-              )
-            : const Text(
-                'Update Quiz',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-      ),
-    );
-  }
-}
-
-class QuestionFormItem {
-  final TextEditingController questionController;
-  final List<TextEditingController> optionsControllers;
-  int correctOptionIndex;
-
-  QuestionFormItem({
-    required this.questionController,
-    required this.optionsControllers,
-    required this.correctOptionIndex,
-  });
-
-  void dispose() {
-    questionController.dispose();
-    for (var controller in optionsControllers) {
-      controller.dispose();
-    }
   }
 }

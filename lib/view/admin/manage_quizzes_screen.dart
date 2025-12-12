@@ -4,6 +4,8 @@ import 'package:quiz_app/logic/admin/manage_quizzes_cubit.dart';
 import 'package:quiz_app/logic/admin/manage_quizzes_state.dart';
 import 'package:quiz_app/model/quiz.dart';
 import 'package:quiz_app/core/routes/routes.dart';
+import 'widgets/quiz_list_card.dart';
+import 'widgets/quiz_filters.dart';
 
 class ManageQuizzesScreen extends StatefulWidget {
   final String? categoryId;
@@ -80,47 +82,7 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
   }
 
   Widget _buildFilters(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Column(
-        children: [
-          TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Search quizzes',
-              prefixIcon: const Icon(Icons.search),
-            ),
-          ),
-          const SizedBox(height: 12),
-          BlocBuilder<ManageQuizzesCubit, ManageQuizzesState>(
-            builder: (context, state) {
-              if (state is ManageQuizzesLoaded) {
-                return DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(hintText: 'Category'),
-                  value: state.selectedCategoryId,
-                  items: [
-                    const DropdownMenuItem(
-                      value: null,
-                      child: Text('All Categories'),
-                    ),
-                    ...state.categories.map(
-                      (category) => DropdownMenuItem(
-                        value: category.id,
-                        child: Text(category.name),
-                      ),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    context.read<ManageQuizzesCubit>().onCategoryChanged(value);
-                  },
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
-        ],
-      ),
-    );
+    return QuizFilters(searchController: _searchController);
   }
 
   Widget _buildQuizList() {
@@ -188,72 +150,11 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
     );
   }
 
-  Card _buildQuizCard(BuildContext context, Quiz quiz) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12.0),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: _buildQuizIcon(context),
-        title: Text(
-          quiz.title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        subtitle: _buildQuizSubtitle(quiz),
-        trailing: _buildPopupMenu(context, quiz),
-        onTap: () => _navigateToEditQuiz(context, quiz),
-      ),
-    );
-  }
-
-  Widget _buildQuizIcon(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withAlpha(10),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Icon(Icons.quiz_rounded, color: Theme.of(context).primaryColor),
-    );
-  }
-
-  Widget _buildQuizSubtitle(Quiz quiz) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Row(
-        children: [
-          const Icon(Icons.question_answer_outlined, size: 16),
-          const SizedBox(width: 4.0),
-          Text("${quiz.questions.length} Questions"),
-          const SizedBox(width: 16.0),
-          const Icon(Icons.timer_outlined, size: 16.0),
-          const SizedBox(width: 4.0),
-          Text("${quiz.timeLimit} mins"),
-        ],
-      ),
-    );
-  }
-
-  PopupMenuButton<String> _buildPopupMenu(BuildContext context, Quiz quiz) {
-    return PopupMenuButton(
-      onSelected: (value) => _handleQuizAction(context, value, quiz),
-      itemBuilder: (context) => [
-        PopupMenuItem(
-          value: 'edit',
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.edit, color: Theme.of(context).primaryColor),
-            title: Text('Edit'),
-          ),
-        ),
-        const PopupMenuItem(
-          value: 'delete',
-          child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.delete, color: Colors.redAccent),
-            title: Text('Delete'),
-          ),
-        ),
-      ],
+  Widget _buildQuizCard(BuildContext context, Quiz quiz) {
+    return QuizListCard(
+      quiz: quiz,
+      onTap: () => _navigateToEditQuiz(context, quiz),
+      onAction: (action) => _handleQuizAction(context, action, quiz),
     );
   }
 

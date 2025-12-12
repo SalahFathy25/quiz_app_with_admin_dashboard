@@ -132,7 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         SizedBox(height: 32.h),
                         ElevatedButton(
-                          onPressed: state is AuthInitial
+                          onPressed: state is AuthLoading
                               ? null
                               : () {
                                   if (_formKey.currentState!.validate()) {
@@ -144,7 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     );
                                   }
                                 },
-                          child: state is AuthInitial
+                          child: state is AuthLoading
                               ? const CircularProgressIndicator(
                                   valueColor: AlwaysStoppedAnimation(
                                     Colors.white,

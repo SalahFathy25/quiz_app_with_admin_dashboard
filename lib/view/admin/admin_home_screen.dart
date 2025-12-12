@@ -7,8 +7,10 @@ import 'package:quiz_app/logic/admin/admin_stats_cubit.dart';
 import 'package:quiz_app/logic/admin/admin_stats_state.dart';
 import 'package:quiz_app/core/routes/routes.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:quiz_app/view/admin/widgets/admin_dashboard_card.dart';
 import 'package:quiz_app/view/admin/widgets/admin_stat_card.dart';
+import 'package:quiz_app/view/admin/widgets/category_stats_list.dart';
+import 'package:quiz_app/view/admin/widgets/recent_activity_list.dart';
+import 'package:quiz_app/view/admin/widgets/quiz_actions_grid.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   const AdminHomeScreen({super.key});
@@ -111,258 +113,11 @@ class AdminHomeScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 24.0),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.pie_chart_rounded,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 24.0,
-                                  ),
-                                  const SizedBox(width: 12.0),
-                                  Text(
-                                    'category_statistics'.tr(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20.0),
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: categoryData.length,
-                                itemBuilder: (context, index) {
-                                  final category = categoryData[index];
-                                  final totalQuizzes = categoryData.fold(
-                                    0,
-                                    (sun, item) => (sun + item['count'] as int),
-                                  );
-
-                                  final percentage = totalQuizzes > 0
-                                      ? ((category['count'] as int) /
-                                            totalQuizzes *
-                                            100)
-                                      : 0.0;
-                                  return Padding(
-                                    padding: const EdgeInsets.only(
-                                      bottom: 16.0,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                category['name'] as String,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleMedium
-                                                    ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                              ),
-                                              const SizedBox(height: 5.0),
-                                              Text(
-                                                '${category['count']} ${(category['count'] as int) == 1 ? 'quiz'.tr() : 'quizzes'.tr()}',
-                                                style: Theme.of(
-                                                  context,
-                                                ).textTheme.bodyMedium,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 6.0,
-                                            horizontal: 12.0,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(
-                                              context,
-                                            ).primaryColor.withAlpha(10),
-                                            borderRadius: BorderRadius.circular(
-                                              20.0,
-                                            ),
-                                          ),
-                                          child: Text(
-                                            '${percentage.toStringAsFixed(0)}%',
-                                            style: TextStyle(
-                                              fontSize: 12.0,
-                                              fontWeight: FontWeight.w500,
-                                              color: Theme.of(
-                                                context,
-                                              ).primaryColor,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      CategoryStatsList(categoryData: categoryData),
                       const SizedBox(height: 24.0),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.history_rounded,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 24.0,
-                                  ),
-                                  const SizedBox(width: 12.0),
-                                  Text(
-                                    'recent_activity'.tr(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20.0),
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: latestQuizzes.length,
-                                itemBuilder: (context, index) {
-                                  final quiz =
-                                      latestQuizzes[index].data()
-                                          as Map<String, dynamic>;
-
-                                  return Padding(
-                                    padding: const EdgeInsets.only(
-                                      bottom: 16.0,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(8.0),
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(
-                                              context,
-                                            ).primaryColor.withAlpha(10),
-                                            borderRadius: BorderRadius.circular(
-                                              12.0,
-                                            ),
-                                          ),
-                                          child: Icon(
-                                            Icons.quiz_rounded,
-                                            color: Theme.of(
-                                              context,
-                                            ).primaryColor,
-                                            size: 20.0,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 16.0),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                quiz['title'],
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 4.0),
-                                              Text(
-                                                '${'created_on'.tr()} ${_formatDate(quiz['createdAt'].toDate())}',
-                                                style: Theme.of(
-                                                  context,
-                                                ).textTheme.bodySmall,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      RecentActivityList(latestQuizzes: latestQuizzes),
                       const SizedBox(height: 24.0),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.speed_rounded,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 24.0,
-                                  ),
-                                  const SizedBox(width: 12.0),
-                                  Text(
-                                    'quiz_actions'.tr(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20.0),
-                              GridView.count(
-                                crossAxisCount: 2,
-                                mainAxisSpacing: 16,
-                                childAspectRatio: 0.9,
-                                crossAxisSpacing: 16,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                children: [
-                                  AdminDashboardCard(
-                                    title: 'quizzes'.tr(),
-                                    icon: Icons.quiz_rounded,
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        AppRoutes.manageQuizzes,
-                                      );
-                                    },
-                                  ),
-                                  AdminDashboardCard(
-                                    title: 'categories'.tr(),
-                                    icon: Icons.category_rounded,
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        AppRoutes.manageCategories,
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      const QuizActionsGrid(),
                     ],
                   ),
                 ),
@@ -374,9 +129,5 @@ class AdminHomeScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
   }
 }

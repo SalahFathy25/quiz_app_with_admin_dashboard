@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quiz_app/logic/admin/manage_categories_cubit.dart';
@@ -26,9 +27,9 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Manage Categories',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          'manage_categories'.tr(),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -73,7 +74,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No categories found',
+            'no_categories_found'.tr(),
             style: TextStyle(
               color: Theme.of(context).textTheme.bodySmall?.color,
               fontSize: 18,
@@ -82,7 +83,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
           const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () => _navigateToAddCategory(context),
-            child: const Text('Add Category'),
+            child: Text('add_category'.tr()),
           ),
         ],
       ),
@@ -146,18 +147,18 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Category'),
-        content: const Text('Are you sure you want to delete this category?'),
+        title: Text('delete_category'.tr()),
+        content: Text('are_you_sure_you_want_to_delete_this_category'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text('cancel'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: Colors.redAccent),
+            child: Text(
+              'delete'.tr(),
+              style: const TextStyle(color: Colors.redAccent),
             ),
           ),
         ],

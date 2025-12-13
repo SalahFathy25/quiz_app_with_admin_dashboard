@@ -1,24 +1,40 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quiz_app/logic/add_category/add_category_cubit.dart';
+import 'package:quiz_app/logic/add_category/add_category_state.dart';
+import 'package:quiz_app/services/category_service.dart';
 import '../../core/widgets/custom_button.dart';
 import '../../model/category.dart';
-import '../../services/category_service.dart';
 import 'widgets/category_form_fields.dart';
 
-class AddCategoryScreen extends StatefulWidget {
+class AddCategoryScreen extends StatelessWidget {
   final Category? category;
 
   const AddCategoryScreen({super.key, this.category});
 
   @override
-  State<AddCategoryScreen> createState() => _AddCategoryScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => AddCategoryCubit(CategoryService(), category),
+      child: AddCategoryView(category: category),
+    );
+  }
 }
 
-class _AddCategoryScreenState extends State<AddCategoryScreen> {
+class AddCategoryView extends StatefulWidget {
+  final Category? category;
+
+  const AddCategoryView({super.key, this.category});
+
+  @override
+  State<AddCategoryView> createState() => _AddCategoryViewState();
+}
+
+class _AddCategoryViewState extends State<AddCategoryView> {
   final _formKey = GlobalKey<FormState>();
-  final _categoryService = CategoryService();
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -36,69 +52,26 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
     super.dispose();
   }
 
-  Future<void> _saveCategory() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final name = _nameController.text.trim();
-      final description = _descriptionController.text.trim();
-
-      if (widget.category != null) {
-        final updatedCategory = widget.category!.copyWith(
-          name: name,
-          description: description,
-        );
-        await _categoryService.updateCategory(updatedCategory);
-        _showSnackbar('Category updated successfully');
-      } else {
-        final newCategory = Category(
-          id: '',
-          name: name,
-          description: description,
-          createdAt: DateTime.now(),
-        );
-        await _categoryService.addCategory(newCategory);
-        _showSnackbar('Category added successfully');
-      }
-
-      if (mounted) Navigator.pop(context, true);
-    } catch (e) {
-      _showSnackbar('Error saving category: $e');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  void _showSnackbar(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
-    }
-  }
-
   Future<bool> _onWillPop() async {
     if (_nameController.text.isNotEmpty ||
         _descriptionController.text.isNotEmpty) {
       return await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('Discard Changes'),
-              content: const Text(
-                'Are you sure you want to discard your changes?',
+              title: Text('discard_changes'.tr()),
+              content: Text(
+                'are_you_sure_you_want_to_discard_your_changes'.tr(),
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Cancel'),
+                  child: Text('cancel'.tr()),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text(
-                    'Delete',
-                    style: TextStyle(color: Colors.redAccent),
+                  child: Text(
+                    'delete'.tr(),
+                    style: const TextStyle(color: Colors.redAccent),
                   ),
                 ),
               ],
@@ -116,34 +89,66 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            widget.category == null ? 'Add Category' : 'Edit Category',
+            widget.category == null
+                ? 'add_category'.tr()
+                : 'edit_category'.tr(),
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CategoryFormFields(
-                    nameController: _nameController,
-                    descriptionController: _descriptionController,
+        body: BlocConsumer<AddCategoryCubit, AddCategoryState>(
+          listener: (context, state) {
+            if (state is AddCategorySuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    widget.category == null
+                        ? 'category_added_successfully'.tr()
+                        : 'category_updated_successfully'.tr(),
                   ),
-                  const SizedBox(height: 32),
-                  CustomButton(
-                    text: widget.category == null
-                        ? 'Add Category'
-                        : 'Update Category',
-                    onPressed: _isLoading ? null : _saveCategory,
-                    isLoading: _isLoading,
+                ),
+              );
+              Navigator.pop(context, true);
+            } else if (state is AddCategoryError) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
+            }
+          },
+          builder: (context, state) {
+            final isLoading = state is AddCategoryLoading;
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CategoryFormFields(
+                        nameController: _nameController,
+                        descriptionController: _descriptionController,
+                      ),
+                      const SizedBox(height: 32),
+                      CustomButton(
+                        text: widget.category == null
+                            ? 'add_category'.tr()
+                            : 'update_category'.tr(),
+                        onPressed: isLoading
+                            ? null
+                            : () =>
+                                  context.read<AddCategoryCubit>().saveCategory(
+                                    _formKey,
+                                    _nameController.text,
+                                    _descriptionController.text,
+                                  ),
+                        isLoading: isLoading,
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

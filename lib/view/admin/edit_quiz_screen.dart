@@ -1,5 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:quiz_app/model/question.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quiz_app/logic/edit_quiz/edit_quiz_cubit.dart';
+import 'package:quiz_app/logic/edit_quiz/edit_quiz_state.dart';
 import 'package:quiz_app/model/quiz.dart';
 import 'package:quiz_app/services/quiz_service.dart';
 import 'package:quiz_app/core/theme/theme.dart';
@@ -7,191 +10,165 @@ import '../../core/widgets/custom_button.dart';
 import 'widgets/edit_quiz_details_form.dart';
 import 'widgets/question_card.dart';
 
-class EditQuizScreen extends StatefulWidget {
+class EditQuizScreen extends StatelessWidget {
   final Quiz quiz;
 
   const EditQuizScreen({super.key, required this.quiz});
 
   @override
-  State<EditQuizScreen> createState() => _EditQuizScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => EditQuizCubit(QuizService(), quiz)..init(),
+      child: EditQuizView(quiz: quiz),
+    );
+  }
 }
 
-class _EditQuizScreenState extends State<EditQuizScreen> {
+class EditQuizView extends StatefulWidget {
+  final Quiz quiz;
+
+  const EditQuizView({super.key, required this.quiz});
+
+  @override
+  State<EditQuizView> createState() => _EditQuizViewState();
+}
+
+class _EditQuizViewState extends State<EditQuizView> {
   final _formKey = GlobalKey<FormState>();
-  final _quizService = QuizService();
   late TextEditingController _titleController;
   late TextEditingController _timeLimitController;
-  bool _isLoading = false;
-  late List<QuestionFormItem> _questionsItems;
 
   @override
   void initState() {
     super.initState();
-    _initData();
+    _titleController = TextEditingController(text: widget.quiz.title);
+    _timeLimitController = TextEditingController(
+      text: widget.quiz.timeLimit.toString(),
+    );
   }
 
   @override
   void dispose() {
     _titleController.dispose();
     _timeLimitController.dispose();
-    for (var item in _questionsItems) {
-      item.dispose();
-    }
     super.dispose();
-  }
-
-  void _initData() {
-    _titleController = TextEditingController(text: widget.quiz.title);
-    _timeLimitController = TextEditingController(
-      text: widget.quiz.timeLimit.toString(),
-    );
-    _questionsItems = widget.quiz.questions.map((q) {
-      return QuestionFormItem(
-        questionController: TextEditingController(text: q.text),
-        optionsControllers: q.options
-            .map((opt) => TextEditingController(text: opt))
-            .toList(),
-        correctOptionIndex: q.correctOptionIndex,
-      );
-    }).toList();
-  }
-
-  void _addQuestion() {
-    setState(() {
-      _questionsItems.add(
-        QuestionFormItem(
-          questionController: TextEditingController(),
-          optionsControllers: List.generate(
-            4,
-            (index) => TextEditingController(),
-          ),
-          correctOptionIndex: 0,
-        ),
-      );
-    });
-  }
-
-  void _removeQuestion(int index) {
-    if (_questionsItems.length > 1) {
-      setState(() {
-        _questionsItems[index].dispose();
-        _questionsItems.removeAt(index);
-      });
-    } else {
-      _showSnackbar('You must have at least one question', isError: true);
-    }
-  }
-
-  Future<void> _updateQuiz() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final questions = _questionsItems
-          .map(
-            (item) => Question(
-              text: item.questionController.text.trim(),
-              correctOptionIndex: item.correctOptionIndex,
-              options: item.optionsControllers
-                  .map((c) => c.text.trim())
-                  .toList(),
-            ),
-          )
-          .toList();
-
-      final updatedQuiz = widget.quiz.copyWith(
-        title: _titleController.text.trim(),
-        timeLimit: int.parse(_timeLimitController.text.trim()),
-        questions: questions,
-      );
-
-      await _quizService.updateQuiz(updatedQuiz);
-      _showSnackbar('Quiz updated successfully');
-      if (mounted) Navigator.pop(context);
-    } catch (e) {
-      _showSnackbar('Error updating quiz: $e', isError: true);
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  void _showSnackbar(String message, {bool isError = false}) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message, style: const TextStyle(color: Colors.white)),
-          backgroundColor: isError ? Colors.redAccent : AppTheme.secondaryColor,
-        ),
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Edit Quiz",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            onPressed: _isLoading ? null : _updateQuiz,
-            icon: const Icon(Icons.save, color: AppTheme.primaryColor),
-          ),
-        ],
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            EditQuizDetailsForm(
-              titleController: _titleController,
-              timeLimitController: _timeLimitController,
+    return BlocConsumer<EditQuizCubit, EditQuizState>(
+      listener: (context, state) {
+        if (state is EditQuizSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'quiz_updated_successfully'.tr(),
+                style: const TextStyle(color: Colors.white),
+              ),
+              backgroundColor: AppTheme.secondaryColor,
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          );
+          Navigator.pop(context);
+        } else if (state is EditQuizError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                state.message,
+                style: const TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is EditQuizLoading;
+        final questionsItems = state is EditQuizInitial
+            ? state.questionsItems
+            : [];
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'edit_quiz'.tr(),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            actions: [
+              IconButton(
+                onPressed: isLoading
+                    ? null
+                    : () => context.read<EditQuizCubit>().updateQuiz(
+                        _formKey,
+                        _titleController.text,
+                        _timeLimitController.text,
+                      ),
+                icon: const Icon(Icons.save, color: AppTheme.primaryColor),
+              ),
+            ],
+          ),
+          body: Form(
+            key: _formKey,
+            child: ListView(
+              padding: const EdgeInsets.all(20),
               children: [
-                const Text(
-                  'Questions',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                EditQuizDetailsForm(
+                  titleController: _titleController,
+                  timeLimitController: _timeLimitController,
                 ),
-                ElevatedButton.icon(
-                  onPressed: _addQuestion,
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Question'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.white,
-                  ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'questions'.tr(),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () =>
+                          context.read<EditQuizCubit>().addQuestion(),
+                      icon: const Icon(Icons.add),
+                      label: Text('add_question'.tr()),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                ...questionsItems.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  return QuestionCard(
+                    index: index,
+                    item: entry.value,
+                    canRemove: questionsItems.length > 1,
+                    onRemove: () =>
+                        context.read<EditQuizCubit>().removeQuestion(index),
+                    onCorrectOptionChanged: (value) {
+                      setState(() => entry.value.correctOptionIndex = value);
+                    },
+                  );
+                }),
+                const SizedBox(height: 32),
+                CustomButton(
+                  text: 'update_quiz'.tr(),
+                  onPressed: isLoading
+                      ? null
+                      : () => context.read<EditQuizCubit>().updateQuiz(
+                          _formKey,
+                          _titleController.text,
+                          _timeLimitController.text,
+                        ),
+                  isLoading: isLoading,
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            ..._questionsItems.asMap().entries.map((entry) {
-              final index = entry.key;
-              return QuestionCard(
-                index: index,
-                item: entry.value,
-                canRemove: _questionsItems.length > 1,
-                onRemove: () => _removeQuestion(index),
-                onCorrectOptionChanged: (value) {
-                  setState(() => entry.value.correctOptionIndex = value);
-                },
-              );
-            }),
-            const SizedBox(height: 32),
-            CustomButton(
-              text: 'Update Quiz',
-              onPressed: _isLoading ? null : _updateQuiz,
-              isLoading: _isLoading,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

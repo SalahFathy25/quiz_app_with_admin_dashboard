@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_app/model/category.dart';
 import 'package:quiz_app/services/category_service.dart';
@@ -25,7 +26,7 @@ class QuizDetailsForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Quiz Details',
+          'quiz_details'.tr(),
           style: Theme.of(
             context,
           ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -33,11 +34,11 @@ class QuizDetailsForm extends StatelessWidget {
         const SizedBox(height: 20),
         CustomTextField(
           controller: titleController,
-          labelText: 'Quiz Title',
-          hintText: 'Enter Quiz title',
+          labelText: 'quiz_title'.tr(),
+          hintText: 'enter_quiz_title'.tr(),
           prefixIcon: Icons.title,
           validator: (value) =>
-              value!.isEmpty ? 'Please enter a quiz title' : null,
+              value!.isEmpty ? 'please_enter_quiz_title'.tr() : null,
           isFinal: false,
         ),
         const SizedBox(height: 20),
@@ -45,7 +46,8 @@ class QuizDetailsForm extends StatelessWidget {
           StreamBuilder<List<Category>>(
             stream: CategoryService().getCategoriesStream(),
             builder: (context, snapshot) {
-              if (snapshot.hasError) return Text('Error: ${snapshot.error}');
+              if (snapshot.hasError)
+                return Text('error'.tr() + ': ${snapshot.error}');
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }
@@ -53,8 +55,8 @@ class QuizDetailsForm extends StatelessWidget {
               return DropdownButtonFormField<String>(
                 value: selectedCategoryId,
                 decoration: InputDecoration(
-                  labelText: 'Category',
-                  hintText: 'Select category',
+                  labelText: 'category'.tr(),
+                  hintText: 'select_category'.tr(),
                   prefixIcon: Icon(
                     Icons.category,
                     color: Theme.of(context).primaryColor,
@@ -70,21 +72,21 @@ class QuizDetailsForm extends StatelessWidget {
                     .toList(),
                 onChanged: onCategoryChanged,
                 validator: (value) =>
-                    value == null ? 'Please select a category' : null,
+                    value == null ? 'please_select_category'.tr() : null,
               );
             },
           ),
         const SizedBox(height: 16),
         CustomTextField(
           controller: timeLimitController,
-          labelText: 'Time Limit (in minutes)',
-          hintText: 'Enter time limit',
+          labelText: 'time_limit_in_minutes'.tr(),
+          hintText: 'enter_time_limit'.tr(),
           prefixIcon: Icons.timer,
           validator: (value) {
-            if (value!.isEmpty) return 'Please enter a time limit';
+            if (value!.isEmpty) return 'please_enter_time_limit'.tr();
             final timeLimit = int.tryParse(value);
             if (timeLimit == null || timeLimit <= 0) {
-              return 'Please enter a valid time limit';
+              return 'please_enter_valid_time_limit'.tr();
             }
             return null;
           },

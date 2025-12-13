@@ -7,6 +7,8 @@ import 'package:quiz_app/logic/auth/auth_state.dart';
 import 'package:quiz_app/view/auth/widgets/auth_app_bar.dart';
 import 'package:quiz_app/view/auth/widgets/register_form.dart';
 
+import '../../core/widgets/success_dialog.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -45,7 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AuthAppBar(title: 'Register'),
+      appBar: AuthAppBar(title: 'register'.tr()),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
@@ -56,22 +58,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (context) => AlertDialog(
-                title: Text('registration_successful'.tr()),
-                content: Icon(
-                  Icons.check_circle_outline,
-                  color: Colors.green,
-                  size: 60.r,
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('ok'.tr()),
-                  ),
-                ],
+              builder: (context) => SuccessDialog(
+                title: 'registration_successful'.tr(),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
               ),
             );
           }

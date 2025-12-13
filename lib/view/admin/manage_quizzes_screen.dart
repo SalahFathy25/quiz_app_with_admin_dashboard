@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quiz_app/logic/admin/manage_quizzes_cubit.dart';
@@ -46,7 +47,7 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
       appBar: AppBar(
         title: BlocBuilder<ManageQuizzesCubit, ManageQuizzesState>(
           builder: (context, state) {
-            var title = widget.categoryName ?? 'All Quizzes';
+            var title = widget.categoryName ?? 'all_quizzes'.tr();
             if (state is ManageQuizzesLoaded &&
                 state.selectedCategoryId != null) {
               try {
@@ -133,7 +134,7 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No quizzes yet',
+            'no_quizzes_yet'.tr(),
             style: TextStyle(
               color: Theme.of(context).textTheme.bodySmall?.color,
               fontSize: 18,
@@ -142,7 +143,7 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
           const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () => _navigateToAddQuiz(context),
-            child: const Text('Add Quiz'),
+            child: Text('add_quiz'.tr()),
           ),
         ],
       ),
@@ -172,9 +173,11 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
     if (state is ManageQuizzesLoaded) {
       categoryId = state.selectedCategoryId;
       if (categoryId != null) {
-        categoryName = state.categories
-            .firstWhere((c) => c.id == categoryId)
-            .name;
+        try {
+          categoryName = state.categories
+              .firstWhere((c) => c.id == categoryId)
+              .name;
+        } catch (_) {}
       }
     }
     Navigator.pushNamed(
@@ -192,18 +195,18 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Quiz'),
-        content: const Text('Are you sure you want to delete this quiz?'),
+        title: Text('delete_quiz'.tr()),
+        content: Text('are_you_sure_you_want_to_delete_this_quiz'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text('cancel'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: Colors.redAccent),
+            child: Text(
+              'delete'.tr(),
+              style: const TextStyle(color: Colors.redAccent),
             ),
           ),
         ],
@@ -212,9 +215,9 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
 
     if (confirm == true && mounted) {
       await context.read<ManageQuizzesCubit>().deleteQuiz(quiz.id);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Quiz deleted successfully')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('quiz_deleted_successfully'.tr())));
     }
   }
 }

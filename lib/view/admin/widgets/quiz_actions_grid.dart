@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:quiz_app/core/routes/app_routes.dart';
 import 'package:quiz_app/core/routes/routes.dart';
 import 'package:quiz_app/view/admin/widgets/admin_dashboard_card.dart';
 
@@ -24,10 +25,9 @@ class QuizActionsGrid extends StatelessWidget {
                 const SizedBox(width: 12.0),
                 Text(
                   'quiz_actions'.tr(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -44,20 +44,14 @@ class QuizActionsGrid extends StatelessWidget {
                   title: 'quizzes'.tr(),
                   icon: Icons.quiz_rounded,
                   onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppRoutes.manageQuizzes,
-                    );
+                    Navigator.pushNamed(context, manageQuizzesScreen);
                   },
                 ),
                 AdminDashboardCard(
                   title: 'categories'.tr(),
                   icon: Icons.category_rounded,
                   onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppRoutes.manageCategories,
-                    );
+                    Navigator.pushNamed(context, manageCategoriesScreen);
                   },
                 ),
               ],

@@ -3,6 +3,7 @@ import 'package:quiz_app/model/question.dart';
 import 'package:quiz_app/model/quiz.dart';
 import 'package:quiz_app/services/quiz_service.dart';
 import 'package:quiz_app/core/theme/theme.dart';
+import '../../core/widgets/custom_button.dart';
 import 'widgets/edit_quiz_details_form.dart';
 import 'widgets/question_card.dart';
 
@@ -183,30 +184,10 @@ class _EditQuizScreenState extends State<EditQuizScreen> {
               );
             }),
             const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              height: 50.0,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _updateQuiz,
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 24.0,
-                        width: 24.0,
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Text(
-                        'Update Quiz',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-              ),
+            CustomButton(
+              text: 'Update Quiz',
+              onPressed: _isLoading ? null : _updateQuiz,
+              isLoading: _isLoading,
             ),
           ],
         ),

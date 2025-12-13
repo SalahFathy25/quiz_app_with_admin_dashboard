@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:quiz_app/model/category.dart';
 import 'package:quiz_app/core/routes/routes.dart';
+import 'package:quiz_app/model/category.dart';
+import 'package:quiz_app/core/routes/app_routes.dart';
 
 class CategoryCard extends StatelessWidget {
   final Category category;
   final int index;
 
-  const CategoryCard({
-    super.key,
-    required this.category,
-    required this.index,
-  });
+  const CategoryCard({super.key, required this.category, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +21,7 @@ class CategoryCard extends StatelessWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(16.r),
             onTap: () {
-              Navigator.pushNamed(
-                context,
-                AppRoutes.category,
-                arguments: category,
-              );
+              Navigator.pushNamed(context, categoryScreen, arguments: category);
             },
             child: Container(
               padding: EdgeInsets.all(16.r),

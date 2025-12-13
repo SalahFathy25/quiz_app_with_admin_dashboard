@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../core/widgets/custom_button.dart';
 import '../../model/category.dart';
 import '../../services/category_service.dart';
 import 'widgets/category_form_fields.dart';
@@ -54,7 +54,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
         _showSnackbar('Category updated successfully');
       } else {
         final newCategory = Category(
-          id: '', // Firestore will generate this
+          id: '',
           name: name,
           description: description,
           createdAt: DateTime.now(),
@@ -133,28 +133,12 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                     descriptionController: _descriptionController,
                   ),
                   const SizedBox(height: 32),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50.0,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _saveCategory,
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : Text(
-                              widget.category == null ? 'Add Category' : 'Update Category',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ),
+                  CustomButton(
+                    text: widget.category == null
+                        ? 'Add Category'
+                        : 'Update Category',
+                    onPressed: _isLoading ? null : _saveCategory,
+                    isLoading: _isLoading,
                   ),
                 ],
               ),

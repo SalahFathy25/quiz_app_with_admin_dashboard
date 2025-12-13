@@ -5,7 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quiz_app/logic/auth/auth_cubit.dart';
 import 'package:quiz_app/logic/auth/auth_state.dart';
 import 'package:quiz_app/logic/home/home_state.dart';
-import 'package:quiz_app/core/routes/routes.dart';
+import 'package:quiz_app/core/routes/app_routes.dart';
+
+import '../../../core/routes/routes.dart';
 
 class HomeAppBar extends StatelessWidget {
   final HomeState state;
@@ -43,7 +45,7 @@ class HomeAppBar extends StatelessWidget {
       actions: [
         IconButton(
           onPressed: () {
-            Navigator.pushNamed(context, AppRoutes.settingsScreen);
+            Navigator.pushNamed(context, settingsScreen);
           },
           icon: const Icon(Icons.settings, color: Colors.white),
           tooltip: 'settings'.tr(),

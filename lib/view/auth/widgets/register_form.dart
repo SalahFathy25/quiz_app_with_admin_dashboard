@@ -1,26 +1,32 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:quiz_app/logic/auth/auth_cubit.dart';
-import 'package:quiz_app/logic/auth/auth_state.dart';
 import 'package:quiz_app/view/auth/widgets/last_row_in_auth.dart';
+import 'package:quiz_app/core/widgets/custom_dropdown_button.dart';
 import 'package:quiz_app/core/widgets/custom_text_field.dart';
 
 import '../../../core/widgets/custom_button.dart';
 
-class LoginForm extends StatelessWidget {
+class RegisterForm extends StatelessWidget {
   final GlobalKey<FormState> formKey;
+  final TextEditingController usernameController;
   final TextEditingController emailController;
   final TextEditingController passwordController;
-  final VoidCallback onLogin;
+  final String selectedRole;
+  final bool isLoading;
+  final void Function(String?) onRoleChanged;
+  final void Function() onRegister;
 
-  const LoginForm({
+  const RegisterForm({
     super.key,
     required this.formKey,
+    required this.usernameController,
     required this.emailController,
     required this.passwordController,
-    required this.onLogin,
+    required this.selectedRole,
+    required this.isLoading,
+    required this.onRoleChanged,
+    required this.onRegister,
   });
 
   @override
@@ -31,37 +37,44 @@ class LoginForm extends StatelessWidget {
         children: [
           SizedBox(height: 20.h),
           CustomTextField(
+            controller: usernameController,
+            labelText: 'username'.tr(),
+            validator: (value) =>
+                value!.isEmpty ? 'please_enter_username'.tr() : null,
+          ),
+          SizedBox(height: 16.h),
+          CustomTextField(
             controller: emailController,
             labelText: 'email'.tr(),
-            prefixIcon: Icons.email_outlined,
             validator: (value) =>
                 value!.isEmpty ? 'please_enter_email'.tr() : null,
-            isFinal: false,
-            keyboardType: TextInputType.emailAddress,
           ),
           SizedBox(height: 16.h),
           CustomTextField(
             controller: passwordController,
             labelText: 'password'.tr(),
             isPassword: true,
-            prefixIcon: Icons.password_outlined,
-            isFinal: true,
-            keyboardType: TextInputType.visiblePassword,
             validator: (value) =>
                 value!.isEmpty ? 'please_enter_password'.tr() : null,
           ),
+          SizedBox(height: 16.h),
+          CustomDropdownButton<String>(
+            value: selectedRole,
+            labelText: 'role'.tr(),
+            items: [
+              DropdownMenuItem(value: 'user', child: Text('user'.tr())),
+              DropdownMenuItem(value: 'admin', child: Text('admin'.tr())),
+            ],
+            onChanged: onRoleChanged,
+          ),
           SizedBox(height: 32.h),
-          BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, state) {
-              return CustomButton(
-                text: 'login'.tr(),
-                onPressed: onLogin,
-                isLoading: state is AuthLoading,
-              );
-            },
+          CustomButton(
+            text: 'register'.tr(),
+            onPressed: onRegister,
+            isLoading: isLoading,
           ),
           SizedBox(height: 16.h),
-          lastRowInAuth(context),
+          lastRowInAuth(context, isLogin: false),
         ],
       ),
     );

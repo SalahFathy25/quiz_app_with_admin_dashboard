@@ -90,7 +90,6 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
 
       final newQuiz = Quiz(
         id: '',
-        // Firestore will generate this
         title: _titleController.text.trim(),
         categoryId: _selectedCategoryId!,
         timeLimit: int.parse(_timeLimitController.text.trim()),
@@ -127,7 +126,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
       appBar: AppBar(
         title: Text(
           widget.categoryName != null
-              ? 'Add ${widget.categoryName} Quiz'
+              ? 'Add Quiz to ${widget.categoryName}'
               : 'Add Quiz',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -148,7 +147,8 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
               timeLimitController: _timeLimitController,
               categoryId: widget.categoryId,
               selectedCategoryId: _selectedCategoryId,
-              onCategoryChanged: (value) => setState(() => _selectedCategoryId = value),
+              onCategoryChanged: (value) =>
+                  setState(() => _selectedCategoryId = value),
             ),
             const SizedBox(height: 16),
             Row(
@@ -156,9 +156,9 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
               children: [
                 Text(
                   'Questions',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 ElevatedButton.icon(
                   onPressed: _addQuestion,
@@ -191,13 +191,18 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                         height: 24.0,
                         width: 24.0,
                         child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                           strokeWidth: 2,
                         ),
                       )
                     : const Text(
                         'Save Quiz',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
               ),
             ),

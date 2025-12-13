@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quiz_app/logic/admin/manage_categories_cubit.dart';
 import 'package:quiz_app/logic/admin/manage_categories_state.dart';
 import 'package:quiz_app/model/category.dart';
-import 'package:quiz_app/core/routes/routes.dart';
+import 'package:quiz_app/core/routes/app_routes.dart';
 import 'package:quiz_app/view/admin/widgets/category_list_item.dart';
+
+import '../../core/routes/routes.dart';
 
 class ManageCategoriesScreen extends StatefulWidget {
   const ManageCategoriesScreen({super.key});
@@ -96,7 +98,8 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
         return CategoryListItem(
           category: category,
           onTap: () => _navigateToManageQuizzes(context, category),
-          onAction: (action) => _handleCategoryAction(context, action, category),
+          onAction: (action) =>
+              _handleCategoryAction(context, action, category),
         );
       },
     );
@@ -115,17 +118,15 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
   }
 
   void _navigateToAddCategory(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.addCategory).then((_) {
+    Navigator.pushNamed(context, addCategoryScreen).then((_) {
       context.read<ManageCategoriesCubit>().fetchCategories();
     });
   }
 
   void _navigateToEditCategory(BuildContext context, Category category) {
-    Navigator.pushNamed(
-      context,
-      AppRoutes.addCategory,
-      arguments: category,
-    ).then((_) {
+    Navigator.pushNamed(context, addCategoryScreen, arguments: category).then((
+      _,
+    ) {
       context.read<ManageCategoriesCubit>().fetchCategories();
     });
   }
@@ -133,7 +134,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
   void _navigateToManageQuizzes(BuildContext context, Category category) {
     Navigator.pushNamed(
       context,
-      AppRoutes.manageQuizzes,
+      manageQuizzesScreen,
       arguments: {'categoryId': category.id, 'categoryName': category.name},
     );
   }
@@ -162,7 +163,6 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
         ],
       ),
     );
-
     if (confirm == true && mounted) {
       await context.read<ManageCategoriesCubit>().deleteCategory(category.id);
     }

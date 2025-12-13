@@ -4,9 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quiz_app/logic/auth/auth_cubit.dart';
 import 'package:quiz_app/logic/auth/auth_state.dart';
-import 'package:quiz_app/core/routes/routes.dart';
+import 'package:quiz_app/view/auth/widgets/auth_app_bar.dart';
 import 'package:quiz_app/view/auth/widgets/login_form.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,37 +18,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _rememberMe = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUserCredentials();
-  }
-
-  void _loadUserCredentials() async {
-    final prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString('email');
-    final password = prefs.getString('password');
-    if (email != null && password != null) {
-      setState(() {
-        _emailController.text = email;
-        _passwordController.text = password;
-        _rememberMe = true;
-      });
-    }
-  }
-
-  void _handleLogin() async {
+  void _handleLogin() {
     if (_formKey.currentState!.validate()) {
-      final prefs = await SharedPreferences.getInstance();
-      if (_rememberMe) {
-        await prefs.setString('email', _emailController.text);
-        await prefs.setString('password', _passwordController.text);
-      } else {
-        await prefs.remove('email');
-        await prefs.remove('password');
-      }
       context.read<AuthCubit>().signIn(
         _emailController.text,
         _passwordController.text,
@@ -67,7 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<AuthCubit, AuthState>(
+      appBar: const AuthAppBar(title: 'Login'),
+      body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
             ScaffoldMessenger.of(
@@ -75,51 +47,17 @@ class _LoginScreenState extends State<LoginScreen> {
             ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
-        builder: (context, state) {
-          return CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                expandedHeight: 200.h,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Text(
-                    'login'.tr(),
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  background: Container(color: Theme.of(context).primaryColor),
-                ),
-                actions: [
-                  IconButton(
-                    onPressed: () =>
-                        Navigator.pushNamed(context, AppRoutes.settingsScreen),
-                    icon: const Icon(Icons.settings),
-                    tooltip: 'settings'.tr(),
-                  ),
-                ],
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(24.w),
-                  child: LoginForm(
-                    formKey: _formKey,
-                    emailController: _emailController,
-                    passwordController: _passwordController,
-                    rememberMe: _rememberMe,
-                    onRememberMeChanged: (value) {
-                      setState(() {
-                        _rememberMe = value!;
-                      });
-                    },
-                    onLogin: _handleLogin,
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(24.w),
+            child: LoginForm(
+              formKey: _formKey,
+              emailController: _emailController,
+              passwordController: _passwordController,
+              onLogin: _handleLogin,
+            ),
+          ),
+        ),
       ),
     );
   }

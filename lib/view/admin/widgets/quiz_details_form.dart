@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_app/model/category.dart';
 import 'package:quiz_app/services/category_service.dart';
+import 'package:quiz_app/core/widgets/custom_text_field.dart';
 
 class QuizDetailsForm extends StatelessWidget {
   final TextEditingController titleController;
@@ -30,15 +31,14 @@ class QuizDetailsForm extends StatelessWidget {
           ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 20),
-        TextFormField(
+        CustomTextField(
           controller: titleController,
-          decoration: InputDecoration(
-            labelText: 'Quiz Title',
-            hintText: 'Enter Quiz title',
-            prefixIcon: Icon(Icons.title, color: Theme.of(context).primaryColor),
-          ),
-          validator: (value) => value!.isEmpty ? 'Please enter a quiz title' : null,
-          textInputAction: TextInputAction.next,
+          labelText: 'Quiz Title',
+          hintText: 'Enter Quiz title',
+          prefixIcon: Icons.title,
+          validator: (value) =>
+              value!.isEmpty ? 'Please enter a quiz title' : null,
+          isFinal: false,
         ),
         const SizedBox(height: 20),
         if (categoryId == null)
@@ -75,14 +75,11 @@ class QuizDetailsForm extends StatelessWidget {
             },
           ),
         const SizedBox(height: 16),
-        TextFormField(
+        CustomTextField(
           controller: timeLimitController,
-          decoration: InputDecoration(
-            labelText: 'Time Limit (in minutes)',
-            hintText: 'Enter time limit',
-            prefixIcon: Icon(Icons.timer, color: Theme.of(context).primaryColor),
-          ),
-          keyboardType: TextInputType.number,
+          labelText: 'Time Limit (in minutes)',
+          hintText: 'Enter time limit',
+          prefixIcon: Icons.timer,
           validator: (value) {
             if (value!.isEmpty) return 'Please enter a time limit';
             final timeLimit = int.tryParse(value);
@@ -91,6 +88,8 @@ class QuizDetailsForm extends StatelessWidget {
             }
             return null;
           },
+          isFinal: true,
+          keyboardType: TextInputType.number,
         ),
       ],
     );

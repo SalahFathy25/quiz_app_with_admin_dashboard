@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quiz_app/logic/auth/auth_cubit.dart';
 import 'package:quiz_app/logic/auth/auth_state.dart';
+import 'package:quiz_app/view/auth/widgets/auth_app_bar.dart';
+import 'package:quiz_app/view/auth/widgets/register_form.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -27,9 +29,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  void _handleRegister(AuthState state) {
+    if (state is! AuthLoading) {
+      if (_formKey.currentState!.validate()) {
+        context.read<AuthCubit>().signUp(
+          _emailController.text,
+          _passwordController.text,
+          _selectedRole,
+          _usernameController.text,
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const AuthAppBar(title: 'Register'),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
@@ -50,8 +66,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 actions: [
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).pop(); // Close dialog
-                      Navigator.of(context).pop(); // Go back to login screen
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
                     },
                     child: Text('ok'.tr()),
                   ),
@@ -61,108 +77,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
           }
         },
         builder: (context, state) {
-          return CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                expandedHeight: 200.h,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Text(
-                    'register'.tr(),
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  background: Container(color: Theme.of(context).primaryColor),
-                ),
+          return SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(24.w),
+              child: RegisterForm(
+                formKey: _formKey,
+                usernameController: _usernameController,
+                emailController: _emailController,
+                passwordController: _passwordController,
+                selectedRole: _selectedRole,
+                isLoading: state is AuthLoading,
+                onRoleChanged: (value) {
+                  setState(() {
+                    _selectedRole = value!;
+                  });
+                },
+                onRegister: () => _handleRegister(state),
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(24.w),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        SizedBox(height: 20.h),
-                        TextFormField(
-                          controller: _usernameController,
-                          decoration: InputDecoration(labelText: 'username'.tr()),
-                          validator: (value) => value!.isEmpty
-                              ? 'please_enter_username'.tr()
-                              : null,
-                        ),
-                        SizedBox(height: 16.h),
-                        TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(labelText: 'email'.tr()),
-                          validator: (value) =>
-                              value!.isEmpty ? 'please_enter_email'.tr() : null,
-                        ),
-                        SizedBox(height: 16.h),
-                        TextFormField(
-                          controller: _passwordController,
-                          decoration: InputDecoration(
-                            labelText: 'password'.tr(),
-                          ),
-                          obscureText: true,
-                          validator: (value) => value!.isEmpty
-                              ? 'please_enter_password'.tr()
-                              : null,
-                        ),
-                        SizedBox(height: 16.h),
-                        DropdownButtonFormField<String>(
-                          value: _selectedRole,
-                          decoration: InputDecoration(labelText: 'role'.tr()),
-                          items: [
-                            DropdownMenuItem(
-                              value: 'user',
-                              child: Text('user'.tr()),
-                            ),
-                            DropdownMenuItem(
-                              value: 'admin',
-                              child: Text('admin'.tr()),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedRole = value!;
-                            });
-                          },
-                        ),
-                        SizedBox(height: 32.h),
-                        ElevatedButton(
-                          onPressed: state is AuthLoading
-                              ? null
-                              : () {
-                                  if (_formKey.currentState!.validate()) {
-                                    context.read<AuthCubit>().signUp(
-                                      _emailController.text,
-                                      _passwordController.text,
-                                      _selectedRole,
-                                      _usernameController.text,
-                                    );
-                                  }
-                                },
-                          child: state is AuthLoading
-                              ? const CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation(
-                                    Colors.white,
-                                  ),
-                                )
-                              : Text('register'.tr()),
-                        ),
-                        SizedBox(height: 16.h),
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text('already_have_account'.tr()),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           );
         },
       ),

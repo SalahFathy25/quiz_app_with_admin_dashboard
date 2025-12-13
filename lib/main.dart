@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quiz_app/logic/auth/auth_cubit.dart';
 import 'package:quiz_app/services/auth_service.dart';
 import 'package:quiz_app/logic/auth/auth_state.dart';
-import 'package:quiz_app/core/routes/routes.dart';
+import 'package:quiz_app/core/routes/app_routes.dart';
 import 'package:quiz_app/services/category_service.dart';
 import 'package:quiz_app/services/quiz_service.dart';
 import 'package:quiz_app/logic/settings/settings_cubit.dart';
@@ -18,6 +18,7 @@ import 'package:quiz_app/core/di/di.dart';
 import 'firebase_options.dart';
 import 'package:quiz_app/core/theme/theme.dart';
 
+import 'logic/admin/admin_stats_cubit.dart';
 import 'logic/home/home_cubit.dart';
 
 void main() async {
@@ -79,7 +80,10 @@ class AuthWrapper extends StatelessWidget {
       builder: (context, state) {
         if (state is Authenticated) {
           if (state.user.role == 'admin') {
-            return const AdminHomeScreen();
+            return BlocProvider(
+              create: (context) => AdminStatsCubit()..fetchStatistics(),
+              child: AdminHomeScreen(),
+            );
           } else {
             return BlocProvider(
               create: (context) => HomeCubit(getIt()),

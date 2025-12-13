@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quiz_app/logic/admin/manage_quizzes_cubit.dart';
 import 'package:quiz_app/logic/admin/manage_quizzes_state.dart';
 import 'package:quiz_app/model/quiz.dart';
-import 'package:quiz_app/core/routes/routes.dart';
+import 'package:quiz_app/core/routes/app_routes.dart';
+import '../../core/routes/routes.dart';
 import 'widgets/quiz_list_card.dart';
 import 'widgets/quiz_filters.dart';
 
@@ -52,9 +53,7 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
                 title = state.categories
                     .firstWhere((c) => c.id == state.selectedCategoryId)
                     .name;
-              } catch (_) {
-                // Category might not be loaded yet
-              }
+              } catch (_) {}
             }
             return Text(
               title,
@@ -180,13 +179,13 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
     }
     Navigator.pushNamed(
       context,
-      AppRoutes.addQuiz,
+      addQuizScreen,
       arguments: {'categoryId': categoryId, 'categoryName': categoryName},
     );
   }
 
   void _navigateToEditQuiz(BuildContext context, Quiz quiz) {
-    Navigator.pushNamed(context, AppRoutes.editQuiz, arguments: quiz);
+    Navigator.pushNamed(context, editQuizScreen, arguments: quiz);
   }
 
   Future<void> _confirmDeleteQuiz(BuildContext context, Quiz quiz) async {

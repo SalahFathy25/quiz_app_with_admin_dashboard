@@ -8,8 +8,7 @@
 A comprehensive and dynamic Quiz Application built with **Flutter** and **Firebase**. This project features a dual-role system (Admin & User), allowing administrators to manage content seamlessly while users enjoy an interactive quiz experience. The app is fully localized (English & Arabic) and supports Light/Dark themes.
 
 ---
-
-## ✨ Key Features
+# ✨ Key Features
 
 ### 🛡️ Admin Dashboard
 The admin panel provides full control over the application's content:
@@ -91,7 +90,7 @@ lib/
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/yourusername/quiz_app.git
+    git clone https://github.com/SalahFathy25/quiz_app_with_admin_dashboard.git
     cd quiz_app
     ```
 
@@ -130,7 +129,3 @@ Contributions are welcome! Please follow these steps:
 5.  Open a Pull Request.
 
 ---
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
